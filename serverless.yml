@@ -4,7 +4,8 @@ frameworkVersion: '3'
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs16.x
+  region: eu-west-1
   # setup profile for AWS CLI.
   # profile: node-aws
 
@@ -13,11 +14,12 @@ plugins:
   # 'serverless-single-page-app-plugin' is a custom plugin that located .serverless_plugins folder.
   # Existing plugin (https://www.npmjs.com/package/serverless-single-page-app-plugin) doesn't have invalidate cache feature that often used during CI/CD events.
   # How to build your own plugins: https://www.serverless.com/framework/docs/providers/aws/guide/plugins#service-local-plugin
-  # - serverless-single-page-app-plugin
+  - serverless-single-page-app-plugin
 
 custom:
   client:
-    bucketName: aws-task2-bucket-rss
+    # bucketName: aws-task2-bucket-rss
+    bucketName: nodejs-aws-2022-task2
     distributionFolder: build
   s3BucketName: ${self:custom.client.bucketName}
 
