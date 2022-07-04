@@ -1,10 +1,11 @@
 service: node-in-aws-web
 
-frameworkVersion: '2'
+frameworkVersion: '3'
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs16.x
+  region: eu-west-1
   # setup profile for AWS CLI.
   # profile: node-aws
 
@@ -17,11 +18,12 @@ plugins:
 
 custom:
   client:
-    bucketName: node-in-aws-web-bucket
+    bucketName: aws-task2-bucket-rss
+    # bucketName: nodejs-aws-2022-task2
     distributionFolder: build
-  s3BucketName: ${self:custom.client.bucketName}
 
   ## Serverless-single-page-app-plugin configuration:
+  s3BucketName: ${self:custom.client.bucketName}
   s3LocalPath: ${self:custom.client.distributionFolder}/
 
 resources:
@@ -69,7 +71,8 @@ resources:
       Properties:
         DistributionConfig:
           Origins:
-            - DomainName: !GetAtt WebAppS3Bucket.RegionalDomainName
+            - DomainName: ${self:custom.s3BucketName}.s3.amazonaws.com
+            # - DomainName: !GetAtt WebAppS3Bucket.RegionalDomainName
               ## An identifier for the origin which must be unique within the distribution
               Id: myS3Origin
               ## In case you don't want to restrict the bucket access use CustomOriginConfig and remove S3OriginConfig
@@ -123,6 +126,10 @@ resources:
   ## In order to print out the hosted domain via `serverless info` we need to define the DomainName output for CloudFormation
   Outputs:
     WebAppS3BucketOutput:
-      Value: !Ref WebAppS3Bucket
+      Value:
+        'Ref': WebAppS3Bucket
+      # Value: !Ref WebAppS3Bucket
     WebAppCloudFrontDistributionOutput:
-      Value: !GetAtt WebAppCloudFrontDistribution.DomainName
+      Value:
+        'Fn::GetAtt': [ WebAppCloudFrontDistribution, DomainName ]
+      # Value: !GetAtt WebAppCloudFrontDistribution.DomainName
